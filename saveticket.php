@@ -1,67 +1,51 @@
 <?php
 require_once('dbs.php'); // Database connection
 
-//sanitize and validate form data
-
+    //sanitize and validate form data
 function cleanInput($value) {
     return  htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
 }
- 
-$category = cleanInput($_POST['category'] ?? '');
-$numberOfTickets = isset($_POST['numberOfTickets']) ? (int)$_POST['numberOfTickets'] : 0;
-$fullName = cleanInput($_POST['fullName'] ?? '');
-$emailRaw = trim($_POST['email'] ?? '');
-$phone = preg_replace('/[^0-9+]/', '', $_POST['phone'] ?? '');     //The ^ in this context is used to exclude certain characters. It tells preg_replace() to remove everything from the phone number that is not a digit or a plus sign.
 
-$deliveryMethod = cleanInput($_POST['paymentMethod'] ?? '');
-$paymentMethod = cleanInput($_POST['paymentMethod'] ?? '');
-$acceptTerms = isset($_POST['acceptTerms']) ? "Yes" : "No" ;
-$promoCode = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $_POST['promoCode'] ?? '')));
+    $category = cleanInput($_POST['category'] ?? '');
+    $numberOfTickets = isset($_POST['numberOfTickets']) ? (int)$_POST['numberOfTickets'] : 0;
+    $fullName = cleanInput($_POST['fullName'] ?? '');
+    $emailRaw = trim($_POST['email'] ?? '');
+    $phone = preg_replace('/[^0-9+]/', '', $_POST['phone'] ?? '');
 
+    $deliveryMethod = cleanInput($_POST['deliveryMethod'] ?? '');  // fixed from paymentMethod
+    $paymentMethod = cleanInput($_POST['paymentMethod'] ?? '');
+    $acceptTerms = isset($_POST['acceptTerms']) ? "Yes" : "No";
+    $promoCode = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $_POST['promoCode'] ?? '')));
 
-//email vadlidate
-$email = filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
- if (!$email) {
-    echo "<p style='color:red;'> Invalid email address provided!</p>";
+    //email vadlidate
+    $email = filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
+    if (!$email) {
+        echo "<p style='color:red;'> Invalid email address provided!</p>";
+    }
 
- }
+    // Define ticket prices
+    $unitPrices = [
+        "standard" => 2500,
+        "vip" => 7500,
+        "balcony" => 3500,
+        "student" => 1800,
+        "child" => 1000,
+    ];
 
-
-// Receive and sanitize form data
-// $category = $_POST['category'];
-// $numberOfTickets = isset($_POST['numberOfTickets']) ? (int)$_POST['numberOfTickets'] : 0;
-// $fullName = $_POST['fullName'];
-// $email = $_POST['email'];
-// $phone = $_POST['phone'];
-// $deliveryMethod = $_POST['deliveryMethod'];
-// $paymentMethod = $_POST['paymentMethod'];
-// $acceptTerms = isset($_POST['acceptTerms']) ? "Yes" : "No";
-// $promoCode = trim(strtolower($_POST['promoCode'] ?? ''));
-
-// Define ticket prices
-$unitPrices = [
-    "standard" => 2500,
-    "vip" => 7500,
-    "balcony" => 3500,
-    "student" => 1800,
-    "child" => 1000,
-];
-
-// Match category string to key
-$categoryKey = null;
-$categoryLower = strtolower($category);
-
-if (strpos($categoryLower, 'standard') !== false) {
-    $categoryKey = 'standard';
-} elseif (strpos($categoryLower, 'vip') !== false) {
-    $categoryKey = 'vip';
-} elseif (strpos($categoryLower, 'balcony') !== false) {
-    $categoryKey = 'balcony';
-} elseif (strpos($categoryLower, 'student') !== false) {
-    $categoryKey = 'student';
-} elseif (strpos($categoryLower, 'child') !== false) {
-    $categoryKey = 'child';
-}
+    // Match category string to key
+    $categoryKey = null;
+    $categoryLower = strtolower($category);
+    if (strpos($categoryLower, 'standard') !== false) {
+        $categoryKey = 'standard';
+    } elseif (strpos($categoryLower, 'vip') !== false) {
+        $categoryKey = 'vip';
+    } elseif (strpos($categoryLower, 'balcony') !== false) {
+        $categoryKey = 'balcony';
+    } elseif (strpos($categoryLower, 'student') !== false) {
+        $categoryKey = 'student';
+    } elseif (strpos($categoryLower, 'child') !== false) {
+        $categoryKey = 'child';
+    }
 
 // Calculate total
 $unitPrice = ($categoryKey && isset($unitPrices[$categoryKey])) ? $unitPrices[$categoryKey] : 0;
@@ -113,15 +97,62 @@ if ($insertStatment) {
 <html>
 <head>
     <title>Ticket Summary</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        strong {
+            color: #444;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        h2 {
+            color: #0077cc;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #0077cc;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #005fa3;
+        }
+    </style>
 </head>
 <body>
     <h1> Ticket Checkout Summary</h1>
 
     <?php
     if ($saved) {
-        echo "<p style='color:green;'> Record added successfully!</p>";
+        echo "<p class='success'> Record added successfully!</p>";
     } else {
-        echo "<p style='color:red;'> Failed to save record: " . $errorMsg . "</p>";
+        echo "<p class='error'> Failed to save record: " . $errorMsg . "</p>";
     }
 
     echo "<p><strong>Full Name:</strong> " . htmlspecialchars($fullName) . "</p>";
@@ -135,13 +166,13 @@ if ($insertStatment) {
     echo "<p><strong>Accepted Terms:</strong> " . $acceptTerms . "</p>";
 
     if ($discountApplied) {
-        echo "<p style='color:green;'><strong>Promo Code Applied: 10% Discount</strong></p>";
+        echo "<p class='success'><strong>Promo Code Applied: 10% Discount</strong></p>";
     } elseif (!empty($promoCode)) {
-        echo "<p style='color:red;'><strong>Invalid Promo Code</strong></p>";
+        echo "<p class='error'><strong>Invalid Promo Code</strong></p>";
     }
 
-    echo "<h2>Total Cost: <span style='color:blue;'>KSh " . number_format($total, 2) . "</span></h2>";
-    echo "<br><a href='view_tickets.php'>➡ View All Tickets</a>";
+    echo "<h2>Total Cost: <span style='color:green;'>KSh " . number_format($total, 2) . "</span></h2>";
+    echo "<a href='view_tickets.php'>📋 View All Tickets</a>";
     ?>
 </body>
 </html>
