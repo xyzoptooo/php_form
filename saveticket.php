@@ -32,7 +32,7 @@ function cleanInput($value) {
         "child" => 1000,
     ];
 
-    // Match category string to key
+    // Match category string to key   
     $categoryKey = null;
     $categoryLower = strtolower($category);
     if (strpos($categoryLower, 'standard') !== false) {
@@ -46,6 +46,19 @@ function cleanInput($value) {
     } elseif (strpos($categoryLower, 'child') !== false) {
         $categoryKey = 'child';
     }
+
+
+    /*$category = "VIP Pass";
+$categoryLower = strtolower($category);  // "vip pass"
+
+if (strpos($categoryLower, 'vip') !== false) {
+    $categoryKey = 'vip';
+}
+strpos("vip pass", "vip") returns 0 — meaning 'vip' starts at position 0.
+
+Since 0 !== false, this condition is true.
+
+So it sets $categoryKey = 'vip'.*/
 
 // Calculate total
 $unitPrice = ($categoryKey && isset($unitPrices[$categoryKey])) ? $unitPrices[$categoryKey] : 0;
@@ -166,7 +179,7 @@ if ($insertStatment) {
     echo "<p><strong>Accepted Terms:</strong> " . $acceptTerms . "</p>";
 
 
-    
+
 
     if ($discountApplied) {
         echo "<p class='success'><strong>Promo Code Applied: 10% Discount</strong></p>";
