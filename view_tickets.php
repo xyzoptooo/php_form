@@ -1,17 +1,51 @@
 <?php
 require_once('dbs.php');
 
-// Query the database
+// Run query
 $result = mysqli_query($myconn, "SELECT * FROM ticket_orders");
 
-// Check if query ran successfully
-if (!$result) {
-    die("Query failed: " . mysqli_error($myconn));
-}
+// Start HTML output
+echo "<html><head><title>All Ticket Orders</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f5f5f5;
+        padding: 20px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+    th {
+        background-color: #0077cc;
+        color: white;
+    }
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+    h1 {
+        color: #2c3e50;
+        text-align: center;
+    }
+</style>
+</head>
+<body>";
 
-// Start HTML table
-echo "<h1> All Ticket Orders</h1>";
-echo "<table border='2' cellpadding='10' cellspacing='0'>";
+// Page title
+echo "<h1>All Ticket Orders</h1>";
+
+// Start table
+echo "<table>";
 echo "<tr>
         <th>ID</th>
         <th>Full Name</th>
@@ -23,13 +57,12 @@ echo "<tr>
         <th>Payment</th>
         <th>Promo Code</th>
         <th>Total Cost (KSh)</th>
-        <th>Delete Record</th>
-
+        <th>Delete</th>
       </tr>";
 
-// Loop through the results using mysqli_fetch_array()
+// Loop through each row of data
 while ($row = mysqli_fetch_array($result)) {
-    $id=$row['id'];
+    $id = $row['id'];
     echo "<tr>";
     echo "<td>" . $row['id'] . "</td>";
     echo "<td>" . htmlspecialchars($row['full_name']) . "</td>";
@@ -40,11 +73,11 @@ while ($row = mysqli_fetch_array($result)) {
     echo "<td>" . htmlspecialchars($row['delivery_method']) . "</td>";
     echo "<td>" . htmlspecialchars($row['payment_method']) . "</td>";
     echo "<td>" . htmlspecialchars($row['promo_code']) . "</td>";
-    echo "<td>" . number_format($row['total_cost'], 2) . "</td>";
-    echo "<td><a href='deleterecord.php?id=$id'>Delete Record<a></td>"; //link to delete
+    echo "<td>KSh " . number_format($row['total_cost'], 2) . "</td>";
+    echo "<td><a href='deleterecord.php?id=$id' style='color: red;'>Delete</a></td>";
     echo "</tr>";
 }
 
-// End table
-echo "</table>";
+// End table and HTML
+echo "</table></body></html>";
 ?>

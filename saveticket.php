@@ -165,6 +165,9 @@ if ($insertStatment) {
     echo "<p><strong>Promo Code:</strong> " . htmlspecialchars($promoCode ?: "None") . "</p>";
     echo "<p><strong>Accepted Terms:</strong> " . $acceptTerms . "</p>";
 
+
+    
+
     if ($discountApplied) {
         echo "<p class='success'><strong>Promo Code Applied: 10% Discount</strong></p>";
     } elseif (!empty($promoCode)) {
@@ -173,6 +176,8 @@ if ($insertStatment) {
 
     echo "<h2>Total Cost: <span style='color:green;'>KSh " . number_format($total, 2) . "</span></h2>";
     echo "<a href='view_tickets.php'>📋 View All Tickets</a>";
+
+
     ?>
 </body>
 </html>

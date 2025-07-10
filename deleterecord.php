@@ -1,18 +1,25 @@
- <?php
-    require_once("dbs.php");
 
-    $id=$_REQUEST['id']; //recieve the primary keyof the selected record
+<?php
+require_once("dbs.php");
 
-    $del=mysqli_query($myconn, "DELETE FROM ticket_orders WHERE id='$id'");
+if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) {
 
-    if($del)
-    {
+    
+  $id = (int)$_REQUEST['id']; //make the id to always integer
+   
+  $statment = $myconn->prepare("DELETE FROM ticket_orders WHERE id = ?");
+
+      $statment->bind_param("i", $id);
+ 
+    if ($statement->execute()) {      //method uded with prepared statments --run the prepared sql statement 
         echo "Record Deleted Successfully";
-    }
-    else 
+    } else {
         echo "Record Not Deleted";
-     
+    }
+    $statement->close();
+} else {
+    echo "Invalid or missing record ID.";
+}
 
-        echo "<a href='view_tickets.php'> Go Back To Records List</a>";
-
+echo "<a href='view_tickets.php'> Go Back To Records List</a>";
 ?>
