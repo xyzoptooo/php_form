@@ -11,12 +11,12 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) {
 
       $statment->bind_param("i", $id);
  
-    if ($statement->execute()) {      //method uded with prepared statments --run the prepared sql statement 
+    if ($statment->execute()) {      //method uded with prepared statments --run the prepared sql statement 
         echo "Record Deleted Successfully";
     } else {
         echo "Record Not Deleted";
     }
-    $statement->close();
+    $statment->close();
 } else {
     echo "Invalid or missing record ID.";
 }
