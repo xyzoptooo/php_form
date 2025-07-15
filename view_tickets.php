@@ -75,6 +75,8 @@ while ($row = mysqli_fetch_array($result)) {
     echo "<td>" . htmlspecialchars($row['promo_code']) . "</td>";
     echo "<td>KSh " . number_format($row['total_cost'], 2) . "</td>";
     echo "<td><a href='deleterecord.php?id=$id' style='color: red;'>Delete</a></td>";
+    echo "<td><a href='updaterecord.php?id=$id' style='blue: red;'>Update</a></td>";
+
     echo "</tr>";
 }
 

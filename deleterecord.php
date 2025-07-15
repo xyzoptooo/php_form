@@ -21,5 +21,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) {
     echo "Invalid or missing record ID.";
 }
 
+
+
 echo "<a href='view_tickets.php'> Go Back To Records List</a>";
 ?>
