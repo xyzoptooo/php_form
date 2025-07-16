@@ -67,7 +67,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) {
     <input type="hidden" name="id" value="<?php echo $id ?>">
 
     <label>Full Name:</label><br>
-    <input type="text" name="full_name" value="<?php echo htmlspecialchars($fullName) ?>" required><br>
+    <input type="text" name="full_name" value="<?php echo htmlspecialchars($fullName) ?>" readonly><br>
 
     <label>Email:</label><br>
     <input type="email" name="email" value="<?php echo htmlspecialchars($email) ?>" required><br>
@@ -97,7 +97,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) {
     <input type="text" name="promo_code" value="<?php echo htmlspecialchars($promo) ?>"><br>
 
     <br>
-    <button type="submit">✅ Update Ticket</button>
+    <button type="submit"> Update Ticket</button>
 </form>
 
 </body>
