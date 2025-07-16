@@ -59,11 +59,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["id"])) {
     }
 
     // Update the DB
-    $stmt = $myconn->prepare("UPDATE ticket_orders 
+    $stmt = $myconn->prepare(
+        "UPDATE ticket_orders 
         SET full_name=?, email=?, phone=?, category=?, tickets=?, delivery_method=?, payment_method=?, promo_code=?, total_cost=? 
-        WHERE id=?");
+        WHERE id=?"
+        );
 
-    $stmt->bind_param("ssssisssdi", 
+    $stmt->bind_param(
+        "ssssisssdi", 
         $fullName, $email, $phone, $category, $tickets, $delivery, $payment, $promo, $total, $id
     );
 

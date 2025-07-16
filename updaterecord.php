@@ -62,7 +62,7 @@ if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) {
 </head>
 <body>
 
-<h2>✏️ Edit Ticket Order</h2>
+<h2> Edit Ticket Order</h2>
 <form action="updateprocess.php" method="POST">
     <input type="hidden" name="id" value="<?php echo $id ?>">
 
