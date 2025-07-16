@@ -5,98 +5,119 @@ function cleanInput($value) {
     return htmlspecialchars(trim($value));
 }
 
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["id"])) {
-    $id = (int)$_POST["id"];
-
-    // Sanitize inputs
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Sanitize and extract inputs
     $fullName = cleanInput($_POST["full_name"] ?? '');
-    $emailRaw = trim($_POST['email'] ?? '');
-    $phone = preg_replace('/[^0-9+]/', '', $_POST["phone"] ?? '');
+    $email = cleanInput($_POST["email"] ?? '');
+    $phone = cleanInput($_POST["phone"] ?? '');
     $category = cleanInput($_POST["category"] ?? '');
-    $tickets = (int)($_POST["tickets"] ?? 0);
-    $delivery = cleanInput($_POST["delivery_method"] ?? '');
-    $payment = cleanInput($_POST["payment_method"] ?? '');
-    $promo = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $_POST["promo_code"] ?? '')));
+    $numberOfTickets = (int)($_POST["numberOfTickets"] ?? 0);
+    $deliveryMethod = cleanInput($_POST["deliveryMethod"] ?? '');
+    $paymentMethod = cleanInput($_POST["paymentMethod"] ?? '');
+    $promoCode = strtolower(trim($_POST["promoCode"] ?? ''));
+    $acceptTerms = isset($_POST["acceptTerms"]) ? "Yes" : "No";
 
-    // Validate email
-    $email = filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
-    if (!$email) {
-        echo "<p style='color:red;'>❌ Invalid email address provided!</p>";
-        exit;
-    }
-
-    // Define ticket prices
-    $unitPrices = [
+    // Price definitions
+    $prices = [
         "standard" => 2500,
         "vip" => 7500,
         "balcony" => 3500,
         "student" => 1800,
-        "child" => 1000,
+        "child" => 1000
     ];
 
-    // Determine category key
-    $categoryKey = null;
-    $categoryLower = strtolower($category);
-    foreach ($unitPrices as $key => $price) {
-        if (strpos($categoryLower, $key) !== false) {
-            $categoryKey = $key;
+    // Detect category key
+    $catKey = null;
+    foreach ($prices as $key => $price) {
+        if (stripos($category, $key) !== false) {
+            $catKey = $key;
             break;
         }
     }
 
-    // Compute total cost
-    $unitPrice = ($categoryKey && isset($unitPrices[$categoryKey])) ? $unitPrices[$categoryKey] : 0;
-    $total = $unitPrice * $tickets;
+    $unitPrice = $catKey ? $prices[$catKey] : 0;
+    $total = $unitPrice * $numberOfTickets;
 
-    // Apply promo discount
-    if ($promo === "dannygram") {
-        $total *= 0.90; // 10% discount
+    // Apply promo
+    if ($promoCode === "dannygram") {
+        $total *= 0.90;
     }
 
-    // Update the database using prepared statement
-    $stmt = $myconn->prepare(
-        "UPDATE ticket_orders 
-         SET full_name=?, email=?, phone=?, category=?, tickets=?, delivery_method=?, payment_method=?, promo_code=?, total_cost=? 
-         WHERE id=?"
-    );
-    $stmt->bind_param(
-        "ssssisssdi", 
-        $fullName, $email, $phone, $category, $tickets, $delivery, $payment, $promo, $total, $id
-    );
-
-    if ($stmt->execute()) {
-        echo "<h2 style='color:green;'>✅ Ticket Updated Successfully</h2>";
-
-        // Fetch and show updated ticket
-        $select = $myconn->prepare("SELECT * FROM ticket_orders WHERE id = ?");
-        $select->bind_param("i", $id);
-        $select->execute();
-        $result = $select->get_result();
-
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-
-            echo "<p><strong>Full Name:</strong> " . htmlspecialchars($row['full_name']) . "</p>";
-            echo "<p><strong>Email:</strong> " . htmlspecialchars($row['email']) . "</p>";
-            echo "<p><strong>Phone:</strong> " . htmlspecialchars($row['phone']) . "</p>";
-            echo "<p><strong>Category:</strong> " . htmlspecialchars($row['category']) . "</p>";
-            echo "<p><strong>Tickets:</strong> " . $row['tickets'] . "</p>";
-            echo "<p><strong>Delivery Method:</strong> " . htmlspecialchars($row['delivery_method']) . "</p>";
-            echo "<p><strong>Payment Method:</strong> " . htmlspecialchars($row['payment_method']) . "</p>";
-            echo "<p><strong>Promo Code:</strong> " . ($row['promo_code'] ?: "None") . "</p>";
-            echo "<h3>Total Cost: <span style='color:blue;'>KSh " . number_format($row['total_cost'], 2) . "</span></h3>";
-        }
-
-        $select->close();
-    } else {
-        echo "<p style='color:red;'>❌ Failed to update ticket: " . $stmt->error . "</p>";
-    }
-
-    $stmt->close();
-} else {
-    echo "<p style='color:red;'>❌ Invalid request. No ticket ID found.</p>";
+    $formattedTotal = "KSh " . number_format($total, 2);
 }
 ?>
 
-<br><br>
-<a href="view_tickets.php">🔙 Back to Ticket List</a>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket Checkout Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f1f1;
+            padding: 30px;
+        }
+        .summary-box {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .summary-box h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .summary-box p {
+            font-size: 1rem;
+            margin: 8px 0;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: green;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="summary-box">
+    <p class="success">✅ Record added successfully!</p>
+    <h2>Ticket Checkout Summary</h2>
+
+    <?php
+    echo "<p><strong>Full Name:</strong> " . htmlspecialchars($fullName) . "</p>";
+    echo "<p><strong>Email:</strong> " . htmlspecialchars($email) . "</p>";
+    echo "<p><strong>Phone Number:</strong> " . htmlspecialchars($phone) . "</p>";
+    echo "<p><strong>Ticket Category:</strong> " . htmlspecialchars($category) . "</p>";
+    echo "<p><strong>Number of Tickets:</strong> " . $numberOfTickets . "</p>";
+    echo "<p><strong>Delivery Method:</strong> " . htmlspecialchars($deliveryMethod) . "</p>";
+    echo "<p><strong>Payment Method:</strong> " . htmlspecialchars($paymentMethod) . "</p>";
+    echo "<p><strong>Promo Code:</strong> " . htmlspecialchars($promoCode ?: "None") . "</p>";
+    echo "<p><strong>Accepted Terms:</strong> " . $acceptTerms . "</p>";
+    echo "<p class='total'>Total Cost: {$formattedTotal}</p>";
+    ?>
+
+    <a href="view_tickets.php" class="btn">📋 View All Tickets</a>
+</div>
+
+</body>
+</html>
