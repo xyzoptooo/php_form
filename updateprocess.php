@@ -1,47 +1,76 @@
 <?php
-require_once("dbs.php"); // connect to DB
+require_once("dbs.php");
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Receive and sanitize values
-    $id = (int)$_POST['id'];
-    $fullName = trim($_POST['full_name']);
-    $email = trim($_POST['email']);
-    $phone = trim($_POST['phone']);
-    $category = trim($_POST['category']);
-    $tickets = (int)$_POST['tickets'];
-    $delivery = trim($_POST['delivery_method']);
-    $payment = trim($_POST['payment_method']);
-    $promo = trim($_POST['promo_code']);
+function cleanInput($value) {
+    return htmlspecialchars(trim($value));
+}
 
-    // Prepare update statement with placeholders
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["id"])) {
+    $id = (int)$_POST["id"];
+
+    // Sanitize inputs
+    $fullName = cleanInput($_POST["full_name"] ?? '');
+    $emailRaw = trim($_POST['email'] ?? '');
+    $phone = preg_replace('/[^0-9+]/', '', $_POST["phone"] ?? '');
+    $category = cleanInput($_POST["category"] ?? '');
+    $tickets = (int)$_POST["tickets"] ?? '';
+    $delivery = cleanInput($_POST["delivery_method"] ?? '');
+    $payment = cleanInput($_POST["payment_method"] ?? '');
+    $promo = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $_POST["promo_code"] ?? '')));
+
+    // Validate email
+   $email = filter_var($emailRaw, FILTER_VALIDATE_EMAIL);
+    if (!$email) {
+        echo "<p style='color:red;'> Invalid email address provided!</p>";
+    }
+
+    // Define ticket prices
+    $unitPrices = [
+        "standard" => 2500,
+        "vip" => 7500,
+        "balcony" => 3500,
+        "student" => 1800,
+        "child" => 1000,
+    ];
+
+    // Determine category key
+    $categoryKey = null;
+    $categoryLower = strtolower($category);
+
+    foreach ($unitPrices as $key => $price) {
+        if (strpos($categoryLower, $key) !== false) {
+            $categoryKey = $key;
+            break;
+        }
+    }
+
+    // Compute total
+    $unitPrice = ($categoryKey && isset($unitPrices[$categoryKey])) ? $unitPrices[$categoryKey] : 0;
+    $total = $unitPrice * $tickets;
+
+    // Apply promo
+    if ($promo === "dannygram") {
+        $total *= 0.90;
+    }
+
+    // Update the database
     $stmt = $myconn->prepare(
-        "UPDATE ticket_orders 
-         SET full_name = ?, email = ?, phone = ?, category = ?, tickets = ?, 
-             delivery_method = ?, payment_method = ?, promo_code = ?
-         WHERE id = ?"
+        "UPDATE ticket_orders SET full_name=?, email=?, phone=?, category=?, tickets=?, delivery_method=?, payment_method=?, promo_code=?, total_cost=? WHERE id=?"
     );
-
-    // Bind values: s = string, i = integer
     $stmt->bind_param(
-        "ssssisssi", 
-        $fullName,
-        $email,
-        $phone,
-        $category,
-        $tickets,
-        $delivery,
-        $payment,
-        $promo,
-        $id
+        "ssssisssdi", 
+        $fullName, $email, $phone, $category, $tickets, $delivery, $payment, $promo, $total, $id
     );
 
-    // Execute and confirm update
     if ($stmt->execute()) {
-        echo "<p style='color:green;'>✅ Ticket updated successfully!</p>";
+        echo "<p style='color:green;'> Ticket Updated Successfully</p>";
     } else {
-        echo "<p style='color:red;'>❌ Failed to update ticket: " . $stmt->error . "</p>";
+        echo "<p style='color:red;'> Failed to update ticket: " . $stmt->error . "</p>";
     }
 
     $stmt->close();
+} else {
+    echo "Invalid Request.";
 }
 ?>
+<a href="view_tickets.php"> Back to Tickets</a>
