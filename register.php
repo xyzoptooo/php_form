@@ -41,6 +41,7 @@ if (!empty($errors)) {
     echo "<h1>Validation Error</h1><ul>";
     foreach ($errors as $e) {
         echo "<li>$e</li>";
+        header("refresh: 3; URL=login.html");
     }
     echo "</ul><a href='index.html'>Go back to register</a>";
     header("refresh: 3; URL=login.html");
