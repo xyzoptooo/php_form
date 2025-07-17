@@ -12,7 +12,7 @@ if (empty($username) || empty($password)) {
     exit;
 }
 
-// Retrieve user record
+// Retrieve user record from the db
 $stmt = $myconn->prepare(
     "SELECT * FROM users WHERE username = ?"
 );
