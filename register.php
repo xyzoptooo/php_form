@@ -1,5 +1,5 @@
 <?php
-require_once "dbconnect.php";
+require_once('dbs.php');
 
 $fullnames = trim($_POST['fullnames']);
 $username = trim($_POST['username']);
