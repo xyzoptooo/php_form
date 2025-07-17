@@ -1,16 +1,35 @@
 <?php
 session_start();
-require_once("dbs.php");
+require_once ("dbs.php");
 
-$username = $_POST['username'];
-$password = md5($_POST['password']);
+// Sanitize inputs
+$username = htmlspecialchars(trim($_POST['username']));
+$password = $_POST['password'];
 
-$result = mysqli_query($myconn, "SELECT * FROM users WHERE username='$username' AND password='$password'");
-if (mysqli_num_rows($result) == 1) {
-    $_SESSION['username'] = $username;
-    echo "<h1>Welcome, $username</h1>";
-    echo "<a href='tickbook1.php'>Place Order</a> | <a href='view_tickets.php'>View Tickets</a>";
+// Validate inputs
+if (empty($username) || empty($password)) {
+    echo "<p>Please enter both username and password. <a href='login.html'>Back</a></p>";
+    exit;
+}
+
+// Retrieve user record
+$stmt = $myconn->prepare("SELECT * FROM users WHERE username = ?");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 1) {
+    $user = $result->fetch_assoc();
+
+    // Use password_verify
+    if (password_verify($password, $user['password'])) {
+        $_SESSION['username'] = $username;
+        echo "<h1>Welcome, " . htmlspecialchars($username) . "!</h1>";
+        echo "<a href='orderform.php'>Place Order</a> | <a href='view_tickets.php'>View Tickets</a> ";
+    } else {
+        echo "<h1>Login Failed</h1><p>Incorrect password. <a href='login.html'>Try again</a></p>";
+    }
 } else {
-    echo "<h1>Error</h1><p>Invalid credentials. <a href='login.html'>Try again</a></p>";
+    echo "<h1>Login Failed</h1><p>No such user found. <a href='login.html'>Try again</a></p>";
 }
 ?>
