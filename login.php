@@ -38,6 +38,8 @@ if ($result->num_rows === 1) {
         echo "<a href='tickbook1.php'>Place Order</a> | <a href='view_tickets.php'>View Tickets</a> ";
     } else {
         echo "<h1>Login Failed</h1><p>Incorrect password. <a href='login.html'>Try again</a></p>";
+        header("refresh: 3; URL=login.html");
+        exit;
     }
 } else {
     echo "<h1>Login Failed</h1><p>No such user found. <a href='login.html'>Try again</a></p>";
