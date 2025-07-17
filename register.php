@@ -1,16 +1,22 @@
 <?php
 require_once ("dbs.php");
 
-// Function to sanitize input
+                                           // Function to sanitize input
 function clean_input($data) {
     return htmlspecialchars(trim($data));
 }
 
-// Sanitize and validate inputs
+                                              // Sanitize and validate inputs
 $fullnames = clean_input($_POST['fullnames']);
+
 $username  = clean_input($_POST['username']);
+
 $password  = $_POST['password']; 
+
 $email     = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+
+
+
 
 // Validate fields
 $errors = [];
@@ -37,6 +43,7 @@ if (!empty($errors)) {
         echo "<li>$e</li>";
     }
     echo "</ul><a href='index.html'>Go back to register</a>";
+    header("refresh: 3; URL=login.html");
     exit;
 }
 
@@ -51,18 +58,31 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     echo "<h1>Error</h1><p>Username already exists. <a href='index.html'>Try another</a></p>";
+    header("refresh: 3; URL=login.html");
+
 } else {
     // Insert new user
     $stmt = $myconn->prepare(
         "INSERT INTO users (fullnames, username, password, email) 
         VALUES (?, ?, ?, ?)"
     );
-    $stmt->bind_param("ssss", $fullnames, $username, $hashedPassword, $email);
+    $stmt->bind_param(
+    "ssss", 
+    $fullnames, $username, $hashedPassword, $email
+);
+
+
     
-    if ($stmt->execute()) {
-        echo "<h1>Success</h1><p>Your account was created. <a href='login.html'>Click here to log in</a>.</p>";
+    if ($stmt->execute()) { //rediect 
+        echo "<h1>Success</h1><p>Your account was created.</p>";
+        echo "<p>Redirecting to login page. </p>";
+        header("refresh: 3; URL=login.html");
+     
+
+
     } else {
         echo "<h1>Error</h1><p>Registration failed. Please try again.</p>";
+        header("refresh: 3; URL=login.html");
     }
 }
 ?>
