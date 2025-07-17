@@ -1,6 +1,98 @@
-<h1>Member Login</h1>
-<form method="post" action="login.php" name="loginform">
-    Username: <input type="text" name="username" required><br>
-    Password: <input type="password" name="password" required><br>
-    <input type="submit" name="login" value="Login">
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Login</title>
+    <style>
+        body {
+            background-color: #f0f8ff; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+        }
+
+        h1 {
+            color: white;
+            background-color: #007BFF; 
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        form {
+            background-color: white;
+            border: 2px solid #007BFF;
+            border-radius: 8px;
+            padding: 20px;
+            width: 400px;
+            margin: 30px auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 95%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input[type="submit"],
+        input[type="reset"] {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        input[type="submit"]:hover,
+        input[type="reset"]:hover {
+            background-color: #0056b3;
+        }
+
+        .note {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .note a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .note a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Member Login</h1>
+
+    <div class="note">
+        <p>Please login below, or <a href="index.html">click here to register</a>.</p>
+    </div>
+
+    <form method="post" action="login.php" name="loginform">
+        <label for="username">Username:</label><br>
+        <input type="text" name="username" id="username" required><br>
+
+        <label for="password">Password:</label><br>
+        <input type="password" name="password" id="password" required><br>
+
+        <input type="submit" name="login" value="Login">
+        <input type="reset" name="reset" value="Reset">
+    </form>
+
+</body>
+</html>

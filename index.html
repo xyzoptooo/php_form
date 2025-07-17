@@ -1,8 +1,74 @@
-<h1>Register New Users</h1>
-<form method="post" action="register.php" name="registerform">
-    Full Names: <input type="text" name="fullnames" required><br>
-    Username: <input type="text" name="username" required><br>
-    Password: <input type="password" name="password" required><br>
-    Email Address: <input type="email" name="email" required><br>
-    <input type="submit" name="register" value="Register">
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register New Users</title>
+    <style>
+        body {
+            background-color: #f0f8ff; /* Light blue background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+        }
+
+        h1 {
+            color: white;
+            background-color: #007BFF; /* Bootstrap primary blue */
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        form {
+            background-color: white;
+            border: 2px solid #007BFF;
+            border-radius: 8px;
+            padding: 20px;
+            width: 400px;
+            margin: 30px auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 95%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Register New Users</h1>
+
+    <form method="post" action="register.php" name="registerform">
+        Full Names:<br>
+        <input type="text" name="fullnames" required><br>
+        Username:<br>
+        <input type="text" name="username" required><br>
+        Password:<br>
+        <input type="password" name="password" required><br>
+        Email Address:<br>
+        <input type="email" name="email" required><br>
+        <input type="submit" name="register" value="Register">
+    </form>
+
+</body>
+</html>

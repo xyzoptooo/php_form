@@ -25,7 +25,7 @@ if ($result->num_rows === 1) {
     if (password_verify($password, $user['password'])) {
         $_SESSION['username'] = $username;
         echo "<h1>Welcome, " . htmlspecialchars($username) . "!</h1>";
-        echo "<a href='orderform.php'>Place Order</a> | <a href='view_tickets.php'>View Tickets</a> ";
+        echo "<a href='tickbook1.php'>Place Order</a> | <a href='view_tickets.php'>View Tickets</a> ";
     } else {
         echo "<h1>Login Failed</h1><p>Incorrect password. <a href='login.html'>Try again</a></p>";
     }
