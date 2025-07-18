@@ -4,7 +4,7 @@ require_once('dbs.php');
 // Run query
 $result = mysqli_query($myconn, "SELECT * FROM ticket_orders");
 
-// Start HTML output
+//  output
 echo "<html><head><title>All Ticket Orders</title>
 <style>
     body {
