@@ -1,7 +1,7 @@
 <?php
 require_once('dbs.php');
 
-// Run query to get data from the db
+// Run query to get data from the db .....
 $result = mysqli_query($myconn, "SELECT * FROM ticket_orders");
 
 //  output
