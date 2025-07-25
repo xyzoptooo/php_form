@@ -80,6 +80,6 @@ while ($row = mysqli_fetch_array($result)) {
     echo "</tr>";
 }
 
-// End table and HTML
+
 echo "</table></body></html>";
 ?>
