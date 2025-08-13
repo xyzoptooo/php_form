@@ -44,6 +44,7 @@ if (!empty($errors)) {
         header("refresh: 3; URL=login.html");
     }
     echo "</ul><a href='index.html'>Go back to register</a>";
+    //cool refresh feature 
     header("refresh: 3; URL=login.html");
     exit;
 }
