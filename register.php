@@ -51,7 +51,8 @@ if (!empty($errors)) {
 // Hash password 
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-// Check for existing user
+// Check for existing user in the database
+
 $stmt = $myconn->prepare("SELECT * FROM users WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
