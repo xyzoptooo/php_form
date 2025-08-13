@@ -48,7 +48,7 @@ if (!empty($errors)) {
     exit;
 }
 
-// Hash password  so that you can verify it later 
+// Hash password  so that you can verify it
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
 // Check for existing user in the database
