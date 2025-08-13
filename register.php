@@ -62,7 +62,7 @@ if ($result->num_rows > 0) {
     header("refresh: 3; URL=login.html");
 
 } else {
-    // Insert new user
+    // Insert new user into the db
     $stmt = $myconn->prepare(
         "INSERT INTO users (fullnames, username, password, email) 
         VALUES (?, ?, ?, ?)"
